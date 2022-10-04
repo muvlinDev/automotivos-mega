@@ -29,10 +29,6 @@ const routes: Routes = [
     component: VentasComponent
   },
   {
-    path: 'kardex',
-    component: InventarioComponent
-  },
-  {
     path: '**', pathMatch: 'full', redirectTo: 'login'
   }
 ];
