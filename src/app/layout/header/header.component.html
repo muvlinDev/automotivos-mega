@@ -1,0 +1,36 @@
+<nav class="navbar navbar-light navbar-expand-lg bg-light bar-color">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#">
+      <img id="logo" src="/assets/images/logo.png"/>
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link" routerLinkActive="active" routerLink="/inicio">Inicio</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLinkActive="active" routerLink="/items">Items</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLinkActive="active" routerLink="/compras">Compras</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLinkActive="active" routerLink="/ventas">Ventas</a>
+        </li>
+      </ul>
+      <span class="navbar-text">
+        <i class="fa-regular fa-user" id="userLbl"></i> {{usuario}}
+        <br> <p id="mailLbl">{{email}}</p>
+      </span>
+      <form class="d-flex" role="search" id="logoutBtn">
+        <!--input class="form-control me-2" type="search" placeholder="Buscar" aria-label="Search">
+        <button class="btn btn-outline-success" type="submit">Buscar</button-->
+          <button class="btn btn-sm btn-outline-dark" (click)="logout()">Cerrar sesión</button>
+      </form>
+      
+    </div>
+  </div>
+</nav>

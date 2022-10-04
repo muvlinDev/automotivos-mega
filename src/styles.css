@@ -1,1 +1,110 @@
-/* You can add global styles to this file, and also import other style files */
+@import '~ngx-toastr/toastr';
+
+.content {
+    margin-bottom: 48px !important;
+}
+.details-table {
+    font-size: 12px;
+}
+#pagination {
+    width: 100%;
+}
+#next {
+    float: right;
+    margin-right: 1em;
+}
+#prev {
+    margin-left: 1em;
+}
+.titleLbl {
+    text-align: center;
+}
+#newBtn {
+    margin: 1em;
+}
+#deleteBtn, #editBtn {
+    margin-left: 1em;
+}
+.bottomBtn {
+    margin-left: 1em;
+}
+#logo {
+    width: 50px;
+}
+#logoImg {
+    width: 50px;
+    position: absolute;
+    top: 0;
+    padding: 5px;
+}
+#title {
+    text-align: center;
+}
+#welcomeText {
+    font-size: 10px;
+}
+#email, #pass {
+    font-size: 11px;
+}
+#submitBtn {
+    float: right;
+}
+#userLbl {
+    font-size: 10px;
+}
+#mailLbl {
+    font-size: 9px;
+}
+#logoutBtn {
+    margin-left: 20px;
+}
+.navbar-text {
+    padding-bottom: 0 !important;
+}
+
+
+/*login*/
+.details-table{
+    font-size: small;
+}
+.icono-logo {
+    height: 60px;
+}
+.overflow-table {
+    display: block;
+    width: 100%;
+    height: 100px;
+    overflow-y: auto;
+}
+.form-check-label {
+    margin-top: 0.1rem;
+}
+.bar-color {
+    background: #ECE9E6;  /* fallback for old browsers */
+    background: -webkit-linear-gradient(to right, #ECE9E6, #FFFFFF);  /* Chrome 10-25, Safari 5.1-6 */
+    background: linear-gradient(to right, #ECE9E6, #FFFFFF); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    color: #403f3f;
+}
+.ftr {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+}
+.login-card {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+    background: #ECE9E6;  /* fallback for old browsers */
+    background: -webkit-linear-gradient(to right, #ECE9E6, #FFFFFF);  /* Chrome 10-25, Safari 5.1-6 */
+    background: linear-gradient(to right, #ECE9E6, #FFFFFF); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    color: #403f3f;
+
+  }
+  .container {
+    margin-top: 1em;
+  }
+  .blackLbl {
+    font-weight: bold;
+  }

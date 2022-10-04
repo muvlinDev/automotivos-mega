@@ -1,0 +1,136 @@
+
+<h1 class="titleLbl">Listado de Items</h1>
+<button type="button" id="newBtn" class="btn btn-sm btn-success mb-1" data-toggle="modal" data-target="#productoModal" (click)="newModal()"><i class="fa-solid fa-plus"></i> Registrar nuevo</button>
+<table class="table">
+    <thead class="thead-dark">
+      <tr>
+        <th scope="col">CODIGO</th>
+        <th scope="col">CLASIFICACION</th>
+        <th scope="col">DESCRIPCION</th>
+        <th scope="col">MARCA</th>
+        <th scope="col">KARDEX</th>
+        <th scope="col">COMPRA</th>
+        <th scope="col" class="details-table">VENTA</th>
+        <th scope="col" class="details-table">CODIGO QR</th>
+        <th scope="col">OPCIONES</th>
+      </tr>
+    </thead>
+    <tbody class="details-table">
+      <tr *ngFor = "let prod of productos | async">
+        <td>{{prod.codigo}}</td>
+        <td><span class="badge text-bg-primary">{{prod.clasificacion}}</span></td>
+        <td>{{prod.descripcion}}</td>
+        <td>{{prod.marca}}</td>
+        <td>
+          <button type="button" class="btn btn-sm btn-outline-success" (click)="kardexGenerate(prod.codigo)"><i class="fa-solid fa-paperclip"></i></button> 
+        </td>
+        <td>{{prod.costo}} Bs.</td>
+        <td>{{prod.precio}} Bs.</td>
+        <td>
+          <button type="button" class="btn btn-sm btn-outline-primary" (click)="qrGenerate(prod.codigo, prod.descripcion, prod.marca)"><i class="fa-solid fa-qrcode"></i></button> 
+        </td>
+        <td>  
+          <button type="button" class="btn btn-sm btn-outline-warning" id="editBtn" data-toggle="modal" data-target="#productoModal" (click)="openModal(prod.id)"><i class="fa-solid fa-pen-to-square"></i></button>
+          <button type="button" class="btn btn-sm btn-outline-danger ml-1" id="deleteBtn" (click)="deleteProducto(prod.id)"><i class="fa-solid fa-trash"></i></button>
+        </td>
+      </tr>
+    </tbody>
+</table>
+<div id="pagination">
+  <button type="button" id="prev" class="btn btn-sm btn-primary mb-1"><i class="fa-solid fa-circle-chevron-left"></i> Anterior</button>
+  <button type="button" id="next" class="btn btn-sm btn-primary mb-1" (click)="next()"> Siguiente <i class="fa-solid fa-circle-chevron-right"></i></button>
+</div>
+
+<!-- Modal QR -->
+<div class="modal fade" id="qrModal" tabindex="-1" aria-labelledby="qrModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="qrModalLabel">ITEM {{cod}}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <h4>{{des}}</h4>
+        <p>{{mar}}</p>
+        <qrcode [qrdata]="qrCode" [width]="256" [errorCorrectionLevel]="'M'" [allowEmptyString]=true></qrcode>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        <button type="button" class="btn btn-primary">Guardar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Kardex -->
+<div class="modal fade" id="kardexModal" tabindex="-1" aria-labelledby="kardexModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="kardexModalLabel">ITEM {{cod}}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div id="kardexPDF">
+          <div class="row details-table">Empresa Unipersonal Automotivos "MEGA"</div>
+          <div class="row details-table">De: Carla Guadalupe Huanca Apaza</div>
+          <div class="row details-table">NIT: 8315762015</div>
+          <div class="row details-table">El Alto - Bolivia</div>
+          <div class="row">
+            <h2 class="text-center">TARJETA KARDEX FISICO VALORADO</h2>
+            <div class="row">
+              <div class="col-sm-3 blackLbl details-table">ARTICULO:</div>
+              <div class="col-sm-3 details-table">{{articulo}}</div>
+              <div class="col-sm-3 blackLbl details-table">UNIDAD DE MEDIDA:</div>
+              <div class="col-sm-3 details-table">PIEZAS</div>
+            </div>
+            <div class="row">
+              <div class="col-sm-3 blackLbl details-table">EXISTENCIA MINIMA:</div>
+              <div class="col-sm-3 details-table">1</div>
+              <div class="col-sm-3 blackLbl details-table">EXISTENCIA MAXIMA:</div>
+              <div class="col-sm-3 details-table">100</div>
+            </div>
+            <div class="row">
+              <div class="col-sm-3 blackLbl details-table">CODIGO:</div>
+              <div class="col-sm-3 details-table">{{cod}}</div>
+              <div class="col-sm-3 blackLbl details-table">METODO:</div>
+              <div class="col-sm-3 details-table">CPP</div>
+            </div>
+            <table class="table table-bordered">
+              <thead>
+                <tr>
+                  <th>FECHA</th>
+                  <th>DETALLE</th>
+                  <th>ENTRADA</th>
+                  <th>SALIDA</th>
+                  <th>SALDO</th>
+                  <th>C/U</th>
+                  <th>ENTRADA</th>
+                  <th>SALIDA</th>
+                  <th>SALDO</th>
+                </tr>
+              </thead>
+              <tbody class="details-table">
+                <tr  *ngFor = "let kar of kardex">
+                  <td>{{kar.fecha}}</td>
+                  <td>{{kar.tipo}}</td>
+                  <td>{{kar.cantidad}}</td>
+                  <td></td>
+                  <td></td>
+                  <td>{{kar.costo}}</td>
+                  <td>{{kar.total}}</td>
+                  <td></td>
+                  <td></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cerrar</button>
+        <!--button type="button" class="btn btn-outline-primary">Generar PDF</button-->
+      </div>
+    </div>
+  </div>
+</div>

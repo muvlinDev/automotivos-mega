@@ -1,0 +1,37 @@
+<div class="login-row">
+    <div class="card col-sm-4 login-card">
+        <div class="card-header">
+            <img id="logoImg" src="/assets/images/logo.png"/>
+            <h4 id="title">AUTOMOTIVOS MEGA</h4>
+        </div>
+        <div class="card-body">
+            <p id="welcomeText">Bienvenido, por favor ingrese sus credenciales</p>
+            <form [formGroup] = "loginForm" (ngSubmit)="login()">
+                <div class="form-group row">
+                    <label for="email" class="col-sm-4 col-form-label">Correo</label>
+                    <div class="col-sm-8">
+                        <input type="text" class="form-control" id="email" formControlName="email">
+                    </div>
+                </div>
+                <br>
+                <div class="form-group row">
+                    <label for="pass" class="col-sm-4 col-form-label">Contraseña</label>
+                    <div class="col-sm-8">
+                        <input type="password" class="form-control" id="pass" formControlName="pass">
+                    </div>
+                </div>
+                <br>
+                <div class="form-group row">
+                    <div class="col-sm-4"></div>
+                    <div class="col-sm-8">
+                        <button type="submit" class="btn btn-outline-dark" id="submitBtn">
+                            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" *ngIf="entrando"></span>
+                            ENTRAR
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+

@@ -1,0 +1,80 @@
+<div class="container">
+    <h2>Registrar nueva venta</h2>
+    <form  autocomplete="off"> 
+        <div class="modal-body details-table">
+          <div class="card">
+            <div class="card-body">
+              <form [formGroup] = "ventaForm" autocomplete="off">
+                <div class="row">
+                  <div class="form-group col-sm-12">
+                    <label for="producto">Seleccione Item</label>
+                    <select id="producto" class="form-control" formControlName="id" (change)="seleccionarProducto($event)">
+                      <option value="">...</option>
+                      <option *ngFor="let p of productos | async" value="{{p.id}}">{{p.codigo}} - {{p.clasificacion}} | {{p.marca}} ({{p.descripcion}})</option>
+                    </select>
+                  </div>
+                </div> 
+                <br>
+                <div class="row">
+                  <div class="form-group col-md-4">
+                    <label for="costo">Precio (Bs.)</label>
+                    <input type="number" class="form-control" id="precio" value="{{precioVenta}}" readonly>
+                  </div>
+                  <div class="form-group col-md-4">
+                    <label for="cantidad">Cantidad</label>
+                    <input type="number" class="form-control" id="cantidad" formControlName="cantidad">
+                  </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-md-3">
+                    <button type="button" class="btn btn-outline-success mt-4 " id="agregar" (click)="agregar()">Agregar</button>
+                  </div>
+                </div> 
+              </form>
+            </div>
+          </div>
+    
+          <div class="card">
+            <div class="card-body">
+              <table class="table">
+                <thead class="thead-dark">
+                  <tr>
+                    <th scope="col">CODIGO DE PRODUCTO</th>
+                    <th scope="col">CLASIFICACION</th>
+                    <th scope="col">DESCRIPCION</th>
+                    <th scope="col">MARCA</th>
+                    <th scope="col">PRECIO</th>
+                    <th scope="col">CANTIDAD</th>
+                    <th scope="col">TOTAL</th>
+                    <th scope="col">QUITAR</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor = "let i = index, let n of nuevasVentas">
+                    <td>{{n.codigo}}</td>
+                    <td>{{n.clasificacion}}</td>
+                    <td>{{n.descripcion}}</td>
+                    <td>{{n.marca}}</td>
+                    <td>{{n.precio | currency}}</td>
+                    <td>{{n.cantidad}}</td>
+                    <td>{{n.total | currency}}</td>
+                    <td><button type="button" class="btn btn-sm btn-danger ml-1" (click)="quitarProducto(i)"><i class="fas fa-trash"></i></button></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <br>
+        <div class="modal-footer">
+            <div class="spinner-border text-primary" role="status" *ngIf="saving == true">
+              <span class="sr-only">Loading...</span>
+            </div>
+            <div *ngIf="saving == false">
+              <button type="button" class="btn btn-secondary bottomBtn" data-dismiss="modal">Cancelar</button>
+              <button type="button" class="btn btn-primary ml-2 bottomBtn" (click)="guardarVentas()">Guardar</button>
+            </div>
+        </div>
+    </form>
+</div>
+
