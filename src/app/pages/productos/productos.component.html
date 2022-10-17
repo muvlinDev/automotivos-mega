@@ -12,6 +12,7 @@
         <th scope="col" class="details-table">COSTO UNITARIO (Bs.)</th>
         <th scope="col" class="details-table">PRECIO VENTA (Bs.)</th>
         <th scope="col" class="details-table">PRECIO FINAL (Bs.)</th>
+        <th scope="col" class="details-table">STOCK</th>
         <th scope="col" class="details-table">QR</th>
         <th scope="col">OPCIONES</th>
       </tr>
@@ -28,6 +29,7 @@
         <td>{{prod.costoUnitario | currency}}</td>
         <td>{{(prod.costoUnitario)*(1.4) | currency}}</td>
         <td>{{(prod.costoUnitario * 1.4)/(0.87) | currency}}</td>
+        <td>{{prod.inventario}} u.</td>
         <td>
           <button type="button" class="btn btn-sm btn-outline-primary" (click)="qrGenerate(prod.codigo, prod.descripcion, prod.marca)"><i class="fa-solid fa-qrcode"></i></button> 
         </td>
