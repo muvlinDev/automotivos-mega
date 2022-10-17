@@ -28,9 +28,8 @@ export class ComprasComponent implements OnInit {
     });
     this.compraForm = this.fb.group({
       id: ['', Validators.required],
-      costo: ['', Validators.required],
-      cantidad: ['', Validators.required],
-      precio: ['', Validators.required]
+      precioCompra: ['', Validators.required],
+      cantidad: ['', Validators.required]
     });
     this.productos = this._db.getAllProductos();
   }
@@ -51,22 +50,40 @@ export class ComprasComponent implements OnInit {
     var one = true;
     prod.forEach(element => {
       if (one) {
+        console.log(element);
         let np = {} as Addedprod;
         np.id = element.id;
         np.codigo = element.codigo;
         np.clasificacion = element.clasificacion;
         np.descripcion = element.descripcion;
         np.marca = element.marca;
-        np.costo = this.compraForm.value.costo;
+        np.precioCompra = this.compraForm.value.precioCompra;
+        np.costoCompra = this.compraForm.value.precioCompra * 0.87;
         np.cantidad = this.compraForm.value.cantidad;
-        np.precio = this.compraForm.value.precio;
-        np.total = Math.round(((this.compraForm.value.costo)*(this.compraForm.value.cantidad)) * 100) / 100;
+        np.precioVenta = 0;
+        np.precioFinal = 0;
+        np.total = Math.round(((this.compraForm.value.precioCompra)*(this.compraForm.value.cantidad)) * 100) / 100;
         np.fecha = this._utils.getTodayTimestamp();
+        np.totalFac = np.total * 0.87;
+        np.inventario = element.inventario > 0 ? (element.inventario + this.compraForm.value.cantidad) : this.compraForm.value.cantidad;
+        np.totalAcumulado = (element.totalAcumulado ? element.totalAcumulado : 0) + np.totalFac;
+        np.costoUnitario = this.getCostoUnitario(element, np.totalFac, np.cantidad);
         this.nuevasCompras.push(np);
+        console.log(np);
+        
         this.compraForm.reset();
         one = false;
       }
     });
+  }
+
+  getCostoUnitario(prod: any, totalFac: number, cantidad: number): number {
+    if (prod.costoUnitario > 0) {
+      return (prod.totalAcumulado + totalFac) / (prod.inventario + cantidad);
+    }
+    else {
+      return totalFac / cantidad;
+    }
   }
 
   quitarProducto(i: number) {
@@ -78,10 +95,14 @@ export class ComprasComponent implements OnInit {
     this.nuevasCompras.forEach( data => {
       this._db.saveCompra(data);
       this.nuevasCompras = [];
-      this.productoForm.value.costo = data.costo;
-      this.productoForm.value.precio = data.precio;
+      this.productoForm.value.costoCompra = data.costoCompra;
+      this.productoForm.value.precioCompra = data.precioCompra;
+      this.productoForm.value.costoUnitario = data.costoUnitario;
+      this.productoForm.value.totalAcumulado = data.totalAcumulado;
+      this.productoForm.value.inventario = data.inventario;
+
       this._db.updateProducto(data.id, this.productoForm.value);
-      this.toastr.success('Registros almacenados correctamente', 'Operación exitosa');
+      this.toastr.success('Registrado correctamente', 'Operación exitosa');
       this.saving = false;
     });
   }

@@ -17,17 +17,17 @@
                 <br>
                 <div class="row">
                   <div class="form-group col-md-4">
-                    <label for="costo">Costo compra</label>
-                    <input type="number" class="form-control" id="costo" formControlName="costo">
+                    <label for="precioCompra">Precio de compra</label>
+                    <input type="number" class="form-control" id="precioCompra" formControlName="precioCompra">
                   </div>
                   <div class="form-group col-md-4">
                     <label for="cantidad">Cantidad</label>
                     <input type="number" class="form-control" id="cantidad" formControlName="cantidad">
                   </div>
-                  <div class="form-group col-md-4">
+                  <!--<div class="form-group col-md-4">
                     <label for="precio">Precio venta</label>
                     <input type="number" class="form-control" id="precio" formControlName="precio">
-                  </div>
+                  </div>-->
                 </div>
                 <div class="row">
                     <div class="form-group col-md-3">
@@ -47,8 +47,8 @@
                     <th scope="col">CLASIFICACION</th>
                     <th scope="col">DESCRIPCION</th>
                     <th scope="col">MARCA</th>
-                    <th scope="col">COSTO</th>
-                    <th scope="col">PRECIO</th>
+                    <th scope="col">PRECIO COMPRA</th>
+                    <!--<th scope="col">COSTO COMPRA</th>-->
                     <th scope="col">CANTIDAD</th>
                     <th scope="col">TOTAL</th>
                     <th scope="col">QUITAR</th>
@@ -60,8 +60,8 @@
                     <td>{{n.clasificacion}}</td>
                     <td>{{n.descripcion}}</td>
                     <td>{{n.marca}}</td>
-                    <td>{{n.costo | currency}}</td>
-                    <td>{{n.precio | currency}}</td>
+                    <td>{{n.precioCompra | currency}}</td>
+                    <!--<td>{{n.costoCompra | currency}}</td>-->
                     <td>{{n.cantidad}}</td>
                     <td>{{n.total | currency}}</td>
                     <td><button type="button" class="btn btn-sm btn-danger ml-1" (click)="quitarProducto(i)"><i class="fas fa-trash"></i></button></td>

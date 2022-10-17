@@ -24,9 +24,23 @@ export class DatabaseService {
     return this.firestore.collection('productos').doc(id).valueChanges({idField: 'id'});
   }
 
+  saveProducto(form: any) {
+    this.firestore.collection('productos').add(form);
+  }
+
   updateProducto(id: string, form:any) {
     this.firestore.collection('productos').doc(id).update(form);
   }
+
+  deleteProduct(id: string) {
+    this.firestore.collection('productos').doc(id).delete();
+  }
+  /*getProductoCantidad(id:string, tipo: string, cantidad: number) {
+    if(tipo == 'COMPRA') {
+      var c = this.firestore.collection('productos').doc(id).get();
+    }
+    
+  }*/
 
   saveCompra(form: any) {
     this.firestore.collection('compras').add(form);

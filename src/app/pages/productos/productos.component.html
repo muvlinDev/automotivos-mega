@@ -9,9 +9,10 @@
         <th scope="col">DESCRIPCION</th>
         <th scope="col">MARCA</th>
         <th scope="col">KARDEX</th>
-        <th scope="col">COMPRA</th>
-        <th scope="col" class="details-table">VENTA</th>
-        <th scope="col" class="details-table">CODIGO QR</th>
+        <th scope="col" class="details-table">COSTO UNITARIO (Bs.)</th>
+        <th scope="col" class="details-table">PRECIO VENTA (Bs.)</th>
+        <th scope="col" class="details-table">PRECIO FINAL (Bs.)</th>
+        <th scope="col" class="details-table">QR</th>
         <th scope="col">OPCIONES</th>
       </tr>
     </thead>
@@ -22,10 +23,11 @@
         <td>{{prod.descripcion}}</td>
         <td>{{prod.marca}}</td>
         <td>
-          <button type="button" class="btn btn-sm btn-outline-success" (click)="kardexGenerate(prod.codigo)"><i class="fa-solid fa-paperclip"></i></button> 
+          <button type="button" class="btn btn-sm btn-outline-success" (click)="getKardex(prod.codigo)"><i class="fa-solid fa-paperclip"></i></button> 
         </td>
-        <td>{{prod.costo}} Bs.</td>
-        <td>{{prod.precio}} Bs.</td>
+        <td>{{prod.costoUnitario | currency}}</td>
+        <td>{{(prod.costoUnitario)*(1.4) | currency}}</td>
+        <td>{{(prod.costoUnitario * 1.4)/(0.87) | currency}}</td>
         <td>
           <button type="button" class="btn btn-sm btn-outline-primary" (click)="qrGenerate(prod.codigo, prod.descripcion, prod.marca)"><i class="fa-solid fa-qrcode"></i></button> 
         </td>
@@ -39,6 +41,48 @@
 <div id="pagination">
   <button type="button" id="prev" class="btn btn-sm btn-primary mb-1"><i class="fa-solid fa-circle-chevron-left"></i> Anterior</button>
   <button type="button" id="next" class="btn btn-sm btn-primary mb-1" (click)="next()"> Siguiente <i class="fa-solid fa-circle-chevron-right"></i></button>
+</div>
+
+<!-- Modal Registro -->
+<div class="modal fade" id="registroModal" tabindex="-1" aria-labelledby="registroModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="registroModalLabel">Registrar Item</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" #closeButtonForm></button>
+      </div>
+      <form [formGroup] = "productoForm" (ngSubmit)="saveProducto()" autocomplete="off"> 
+        <div class="modal-body details-table">
+          <div class="card">
+            <div class="card-body">
+              <div class="row">
+                <div class="form-group col-sm-6">
+                  <label for="codigo">Codigo</label>
+                  <input type="text" class="form-control" id="codigo" oninput="this.value = this.value.toUpperCase()" formControlName="codigo">
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="clasificacion">Clasificación</label>
+                <input type="text" class="form-control" id="clasificacion" oninput="this.value = this.value.toUpperCase()" formControlName="clasificacion">
+              </div>
+              <div class="form-group">
+                <label for="descripcion">Descripción</label>
+                <input type="text" class="form-control" id="descripcion" oninput="this.value = this.value.toUpperCase()" formControlName="descripcion">
+              </div>
+              <div class="form-group">
+                <label for="marca">Marca</label>
+                <input type="text" class="form-control" id="marca" oninput="this.value = this.value.toUpperCase()" formControlName="marca">
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+            <button type="submit" class="btn btn-primary">Guardar</button>
+        </div>
+    </form>
+    </div>
+  </div>
 </div>
 
 <!-- Modal QR -->
@@ -56,7 +100,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-        <button type="button" class="btn btn-primary">Guardar</button>
+        <!-- <button type="button" class="btn btn-primary">Guardar</button> -->
       </div>
     </div>
   </div>
@@ -114,13 +158,24 @@
                 <tr  *ngFor = "let kar of kardex">
                   <td>{{kar.fecha}}</td>
                   <td>{{kar.tipo}}</td>
-                  <td>{{kar.cantidad}}</td>
-                  <td></td>
-                  <td></td>
-                  <td>{{kar.costo}}</td>
-                  <td>{{kar.total}}</td>
-                  <td></td>
-                  <td></td>
+                  <div *ngIf="kar.tipo == 'COMPRA'; then thenBlock else elseBlock">{{kar.tipo}}</div>
+                  <ng-template #thenBlock>
+                    <td>{{kar.cantidad}}</td>
+                    <td></td>
+                    <td>{{kar.inventario}}</td>
+                    <td>{{kar.costoUnitario | currency}}</td>
+                    <td>{{kar.totalFac | currency}}</td>
+                    <td></td>
+                  </ng-template>
+                  <ng-template #elseBlock>
+                    <td></td>
+                    <td>{{kar.cantidad}}</td>
+                    <td>{{kar.inventario}}</td>
+                    <td>{{kar.costoUnitario | currency}}</td>
+                    <td></td>
+                    <td>{{kar.precioVenta | currency}}</td>
+                  </ng-template>
+                  <td>{{kar.totalAcumulado | currency}}</td>
                 </tr>
               </tbody>
             </table>

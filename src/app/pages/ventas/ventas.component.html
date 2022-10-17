@@ -17,8 +17,12 @@
                 <br>
                 <div class="row">
                   <div class="form-group col-md-4">
-                    <label for="costo">Precio (Bs.)</label>
-                    <input type="number" class="form-control" id="precio" value="{{precioVenta}}" readonly>
+                    <label for="precioFinal">Precio de venta (Bs.)</label>
+                    <input type="number" class="form-control" id="precioFinal" value="{{precioFinal}}" readonly>
+                  </div>
+                  <div class="form-group col-md-4">
+                    <label for="precioVenta">Precio sin IVA (Bs.)</label>
+                    <input type="number" class="form-control" id="precioVenta" value="{{precioVenta}}" readonly>
                   </div>
                   <div class="form-group col-md-4">
                     <label for="cantidad">Cantidad</label>
@@ -55,7 +59,7 @@
                     <td>{{n.clasificacion}}</td>
                     <td>{{n.descripcion}}</td>
                     <td>{{n.marca}}</td>
-                    <td>{{n.precio | currency}}</td>
+                    <td>{{n.precioFinal | currency}}</td>
                     <td>{{n.cantidad}}</td>
                     <td>{{n.total | currency}}</td>
                     <td><button type="button" class="btn btn-sm btn-danger ml-1" (click)="quitarProducto(i)"><i class="fas fa-trash"></i></button></td>

@@ -4,10 +4,16 @@ export interface Addedprod {
     clasificacion: string,
     descripcion: string,
     marca: string,
-    costo: number,
-    precio: number,
+    precioCompra: number,
+    costoCompra: number,
     cantidad: number,
     total: number,
+    totalFac: number,
+    precioVenta: number,
+    precioFinal: number,
+    inventario: number,
+    totalAcumulado: number,
+    costoUnitario: number,
     fecha: any,
     date: Date
 }

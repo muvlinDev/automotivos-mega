@@ -19,11 +19,15 @@ export class VentasComponent implements OnInit {
   saving = false;
   productoSeleccionado = '';
   precioVenta = 0;
+  precioFinal = 0;
+  margenUtilidad = 0.4;
+  productForm: FormGroup;
 
   constructor( private fb: FormBuilder,
                private _db: DatabaseService,
                private _utils: UtilsService,
                private toastr: ToastrService ) { 
+    this.productForm = this.fb.group({});
     this.ventaForm = this.fb.group({
       id: ['', Validators.required],
       cantidad: ['', Validators.required]
@@ -41,8 +45,8 @@ export class VentasComponent implements OnInit {
     var one = true;
     prod.forEach(element => {
       if (one) {
-        this.precioVenta = element.precio;
-        console.log("PV", this.precioVenta);
+        this.precioVenta = element.costoUnitario * (1 + this.margenUtilidad);
+        this.precioFinal = this.precioVenta / (1 - 0.13);
         one = false;
       }
     });
@@ -57,22 +61,48 @@ export class VentasComponent implements OnInit {
     var one = true;
     prod.forEach(element => {
       if (one) {
-        let np = {} as Soldprod;
-        np.id = element.id;
-        np.codigo = element.codigo;
-        np.clasificacion = element.clasificacion;
-        np.descripcion = element.descripcion;
-        np.marca = element.marca;
-        np.precio = this.precioVenta;
-        np.cantidad = this.ventaForm.value.cantidad;
-        np.total = Math.round(((this.precioVenta)*(this.ventaForm.value.cantidad)) * 100) / 100;
-        np.fecha = this._utils.getTodayTimestamp();
-        this.nuevasVentas.push(np);
-        this.ventaForm.reset();
-        this.precioVenta = 0;
+        if (element.inventario > this.ventaForm.value.cantidad) {
+          let np = {} as Soldprod;
+          np.id = element.id;
+          np.codigo = element.codigo;
+          np.clasificacion = element.clasificacion;
+          np.descripcion = element.descripcion;
+          np.marca = element.marca;
+          np.precioCompra = element.precioCompra;
+          np.costoCompra = element.costoCompra;
+          np.cantidad = this.ventaForm.value.cantidad;
+          np.precioVenta = this.precioVenta;
+          np.precioFinal = this.precioVenta / (1 - 0.13);
+          np.total = Math.round(((np.precioFinal)*(this.ventaForm.value.cantidad)) * 100) / 100;
+          np.fecha = this._utils.getTodayTimestamp();
+          // np.totalFac = this.precioVenta * 0.87;
+          np.totalFac = element.costoUnitario;
+          np.inventario = element.inventario - this.ventaForm.value.cantidad;
+          np.totalAcumulado = element.totalAcumulado - np.totalFac;
+          np.costoUnitario = element.costoUnitario;
+          console.log(np);
+          
+          this.nuevasVentas.push(np);
+          this.ventaForm.reset();
+
+          this.precioVenta = 0;
+        }
+        else {
+          this.toastr.error('No tiene inventario suficiente, disponible ' + element.inventario, 'Ocurrió un error');
+          return
+        }
         one = false;
       }
     });
+  }
+
+  getCostoUnitario(prod: any, totalFac: number, cantidad: number): number {
+    if (prod.costoUnitario > 0) {
+      return Math.round((prod.totalAcumulado - totalFac) / (prod.inventario - cantidad) *100) / 100;
+    }
+    else {
+      return totalFac / cantidad;
+    }
   }
 
   quitarProducto(i: number) {
@@ -84,6 +114,11 @@ export class VentasComponent implements OnInit {
     this.nuevasVentas.forEach( data => {
       this._db.saveVenta(data);
       this.nuevasVentas = [];
+      this.productForm.value.inventario = data.inventario;
+      this.productForm.value.totalAcumulado = data.totalAcumulado;
+      this.productForm.value.costoUnitario = data.costoUnitario;
+
+      this._db.updateProducto(data.id, this.productForm.value);
       this.toastr.success('Registrado correctamente', 'Operación exitosa');
       this.saving = false;
     });

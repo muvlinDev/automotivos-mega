@@ -20,6 +20,8 @@ import { ComprasComponent } from './pages/compras/compras.component';
 import { VentasComponent } from './pages/ventas/ventas.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { InventarioComponent } from './pages/inventario/inventario.component';
+import { CantidadDirective } from './directives/cantidad.directive';
+import { SweetAlert2Module } from '@sweetalert2/ngx-sweetalert2';
 
 const firebaseConfig = {
   apiKey: "AIzaSyDkCeaHHfICNrBgkC-eBAAq21yux1yxt7g",
@@ -41,7 +43,8 @@ const firebaseConfig = {
     LoginComponent,
     ComprasComponent,
     VentasComponent,
-    InventarioComponent
+    InventarioComponent,
+    CantidadDirective
   ],
   imports: [
     BrowserModule,
@@ -53,7 +56,8 @@ const firebaseConfig = {
     AngularFireModule.initializeApp(firebaseConfig),
     AngularFireAuthModule,
     BrowserAnimationsModule,
-    ToastrModule.forRoot()
+    ToastrModule.forRoot(),
+    SweetAlert2Module.forRoot()
   ],
   providers: [
     
