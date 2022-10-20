@@ -24,7 +24,7 @@
         <td>{{prod.descripcion}}</td>
         <td>{{prod.marca}}</td>
         <td>
-          <button type="button" class="btn btn-sm btn-outline-success" (click)="getKardex(prod.codigo)"><i class="fa-solid fa-paperclip"></i></button> 
+          <button type="button" class="btn btn-sm btn-outline-success" (click)="getKardex(prod.codigo, prod.id)"><i class="fa-solid fa-paperclip"></i></button> 
         </td>
         <td>{{prod.costoUnitario | currency}}</td>
         <td>{{(prod.costoUnitario)*(1.4) | currency}}</td>
@@ -116,7 +116,7 @@
         <h5 class="modal-title" id="kardexModalLabel">ITEM {{cod}}</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <div class="modal-body">
+      <div class="modal-body" id="contentToConvert">
         <div id="kardexPDF">
           <div class="row details-table">Empresa Unipersonal Automotivos "MEGA"</div>
           <div class="row details-table">De: Carla Guadalupe Huanca Apaza</div>
@@ -151,20 +151,30 @@
                   <th>SALIDA</th>
                   <th>SALDO</th>
                   <th>C/U</th>
-                  <th>ENTRADA</th>
-                  <th>SALIDA</th>
+                  <th>DEBE</th>
+                  <th>HABER</th>
                   <th>SALDO</th>
                 </tr>
               </thead>
               <tbody class="details-table">
-                <tr  *ngFor = "let kar of kardex">
+                <tr  *ngFor = "let kar of kardex  ; last as isLast">
                   <td>{{kar.fecha}}</td>
                   <td>{{kar.tipo}}</td>
                   <div *ngIf="kar.tipo == 'COMPRA'; then thenBlock else elseBlock">{{kar.tipo}}</div>
                   <ng-template #thenBlock>
                     <td>{{kar.cantidad}}</td>
                     <td></td>
-                    <td>{{kar.inventario}}</td>
+                    <ng-template [ngIf]="isLast" [ngIfElse]="noLast">
+                      <td>
+                        <ng-template [ngIf]="kar.inventario < 2" [ngIfElse]="conInventario">
+                          <span style="color:red;">{{kar.inventario}}</span>
+                        </ng-template>
+                        <ng-template #conInventario>{{kar.inventario}}</ng-template>
+                      </td> 
+                    </ng-template>
+                    <ng-template #noLast>
+                      <td>{{kar.inventario}}</td>
+                    </ng-template>
                     <td>{{kar.costoUnitario | currency}}</td>
                     <td>{{kar.totalFac | currency}}</td>
                     <td></td>
@@ -172,7 +182,17 @@
                   <ng-template #elseBlock>
                     <td></td>
                     <td>{{kar.cantidad}}</td>
-                    <td>{{kar.inventario}}</td>
+                    <ng-template [ngIf]="isLast" [ngIfElse]="noLast">
+                      <td>
+                        <ng-template [ngIf]="kar.inventario < 2" [ngIfElse]="conInventario">
+                          <span style="color:red;">{{kar.inventario}}</span>
+                        </ng-template>
+                        <ng-template #conInventario>{{kar.inventario}}</ng-template>
+                      </td> 
+                    </ng-template>
+                    <ng-template #noLast>
+                      <td>{{kar.inventario}}</td>
+                    </ng-template>
                     <td>{{kar.costoUnitario | currency}}</td>
                     <td></td>
                     <td>{{kar.precioVenta | currency}}</td>
@@ -181,12 +201,15 @@
                 </tr>
               </tbody>
             </table>
+            <div class="row">
+              <span *ngIf="">Quedan poco stock de este item</span>
+            </div>
           </div>
         </div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cerrar</button>
-        <!--button type="button" class="btn btn-outline-primary">Generar PDF</button-->
+        <button type="button" class="btn btn-outline-primary" (click)="pdfGenerate()">Generar PDF</button>
       </div>
     </div>
   </div>
