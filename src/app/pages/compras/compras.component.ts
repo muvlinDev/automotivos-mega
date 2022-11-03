@@ -67,8 +67,8 @@ export class ComprasComponent implements OnInit {
         np.totalFac = np.total * 0.87;
         np.inventario = element.inventario > 0 ? (element.inventario + this.compraForm.value.cantidad) : this.compraForm.value.cantidad;
         np.totalAcumulado = (element.totalAcumulado ? element.totalAcumulado : 0) + np.totalFac;
-        //np.costoUnitario = this.getCostoUnitario(element, np.totalFac, np.cantidad);
-        np.costoUnitario = np.costoCompra;
+        np.costoUnitario = this.getCostoUnitario(element, np.totalFac, np.cantidad);
+        //np.costoUnitario = np.costoCompra;
         this.nuevasCompras.push(np);
         console.log(np);
         
