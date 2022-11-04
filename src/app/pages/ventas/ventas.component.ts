@@ -77,7 +77,7 @@ export class VentasComponent implements OnInit {
           np.total = Math.round(((np.precioFinal)*(this.ventaForm.value.cantidad)) * 100) / 100;
           np.fecha = this._utils.getTodayTimestamp();
           // np.totalFac = this.precioVenta * 0.87;
-          np.totalFac = element.costoUnitario;
+          np.totalFac = element.costoUnitario * np.cantidad;
           np.inventario = element.inventario - this.ventaForm.value.cantidad;
           np.totalAcumulado = element.totalAcumulado - np.totalFac;
           np.costoUnitario = element.costoUnitario;
