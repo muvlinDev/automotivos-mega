@@ -22,6 +22,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { InventarioComponent } from './pages/inventario/inventario.component';
 import { CantidadDirective } from './directives/cantidad.directive';
 import { SweetAlert2Module } from '@sweetalert2/ngx-sweetalert2';
+import { DevolucionesComponent } from './pages/devoluciones/devoluciones.component';
 
 const firebaseConfig = {
   apiKey: "AIzaSyDkCeaHHfICNrBgkC-eBAAq21yux1yxt7g",
@@ -44,7 +45,8 @@ const firebaseConfig = {
     ComprasComponent,
     VentasComponent,
     InventarioComponent,
-    CantidadDirective
+    CantidadDirective,
+    DevolucionesComponent
   ],
   imports: [
     BrowserModule,

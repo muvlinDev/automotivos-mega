@@ -45,7 +45,8 @@ export class VentasComponent implements OnInit {
     var one = true;
     prod.forEach(element => {
       if (one) {
-        this.precioVenta = element.costoUnitario * (1 + this.margenUtilidad);
+        console.log((element.costoUnitario * (1 + this.margenUtilidad)));
+        this.precioVenta = Math.round((element.costoUnitario * (1 + this.margenUtilidad)) * 100) / 100;
         this.precioFinal = Math.round((this.precioVenta / (1 - 0.13)) * 100) / 100;
         one = false;
       }
