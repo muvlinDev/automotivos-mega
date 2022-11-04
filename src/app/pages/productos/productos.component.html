@@ -160,7 +160,7 @@
                 <tr  *ngFor = "let kar of kardex  ; last as isLast">
                   <td>{{kar.fecha}}</td>
                   <td>{{kar.tipo}}</td>
-                  <div *ngIf="kar.tipo == 'COMPRA'; then thenBlock else elseBlock">{{kar.tipo}}</div>
+                  <div *ngIf="kar.tipo == 'COMPRA' || kar.tipo == 'SALDO'; then thenBlock else elseBlock">{{kar.tipo}}</div>
                   <ng-template #thenBlock>
                     <td>{{kar.cantidad}}</td>
                     <td></td>

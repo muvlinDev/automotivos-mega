@@ -179,7 +179,7 @@ export class ProductosComponent implements OnInit {
           for(var i = 0; i < c.length; i++) {
             let kar = c[i];
             kar.fecha = this._utils.getDateFromTimestamp(kar.fecha);
-            kar.tipo = 'COMPRA';
+            //kar.tipo = kar.tipo;
             kar.date = this._utils.getDateFromString(kar.fecha);
             console.log(kar);
             
@@ -192,7 +192,7 @@ export class ProductosComponent implements OnInit {
             this.articulo = v[i].descripcion;
             let kar = v[i];
             kar.fecha = this._utils.getDateFromTimestamp(kar.fecha);
-            kar.tipo = 'VENTA';
+            //kar.tipo = 'VENTA';
             kar.date = this._utils.getDateFromString(kar.fecha);
             console.log(kar);
             this.kardex.push(kar);

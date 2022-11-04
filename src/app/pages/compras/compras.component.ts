@@ -70,6 +70,7 @@ export class ComprasComponent implements OnInit {
         np.costoUnitario = this.getCostoUnitario(element, np.totalFac, np.cantidad);
         //np.costoUnitario = np.costoCompra;
         this.nuevasCompras.push(np);
+        np.tipo = 'COMPRA';
         console.log(np);
         
         this.compraForm.reset();

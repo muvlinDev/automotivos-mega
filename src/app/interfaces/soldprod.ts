@@ -15,5 +15,6 @@ export interface Soldprod {
     totalAcumulado: number,
     costoUnitario: number,
     fecha: any,
-    date: Date
+    date: Date,
+    tipo: string
 }

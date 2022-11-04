@@ -46,7 +46,7 @@ export class VentasComponent implements OnInit {
     prod.forEach(element => {
       if (one) {
         this.precioVenta = element.costoUnitario * (1 + this.margenUtilidad);
-        this.precioFinal = this.precioVenta / (1 - 0.13);
+        this.precioFinal = Math.round((this.precioVenta / (1 - 0.13)) * 100) / 100;
         one = false;
       }
     });
@@ -80,11 +80,12 @@ export class VentasComponent implements OnInit {
           np.inventario = element.inventario - this.ventaForm.value.cantidad;
           np.totalAcumulado = element.totalAcumulado - np.totalFac;
           np.costoUnitario = element.costoUnitario;
+          np.tipo = "VENTA";
           console.log(np);
           
           this.nuevasVentas.push(np);
           this.ventaForm.reset();
-
+          this.precioFinal = 0;
           this.precioVenta = 0;
         }
         else {
