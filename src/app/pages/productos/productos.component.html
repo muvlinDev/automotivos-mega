@@ -175,8 +175,20 @@
                     <ng-template #noLast>
                       <td>{{kar.inventario}}</td>
                     </ng-template>
-                    <td>{{kar.costoUnitario | currency}}</td>
-                    <td>{{kar.totalFac | currency}}</td>
+                    <div *ngIf="kar.tipo == 'COMPRA'; then compraBlock else otroBlock"></div>
+                      <ng-template #compraBlock>
+                        <td>{{(kar.totalFac / kar.cantidad) | currency}}</td>
+                      </ng-template>
+                      <ng-template #otroBlock>
+                        <td>{{kar.costoUnitario | currency}}</td>
+                      </ng-template>
+                      <div *ngIf="kar.tipo == 'SALDO'; then devBlock else otrBlock"></div>
+                      <ng-template #devBlock>
+                        <td>{{kar.totalAcumulado | currency}}</td>
+                      </ng-template>
+                      <ng-template #otrBlock>
+                        <td>{{kar.totalFac | currency}}</td>
+                      </ng-template>
                     <td></td>
                   </ng-template>
                   <ng-template #elseBlock>
