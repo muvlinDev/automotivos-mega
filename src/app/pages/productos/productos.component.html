@@ -182,12 +182,18 @@
                       <ng-template #otroBlock>
                         <td>{{kar.costoUnitario | currency}}</td>
                       </ng-template>
-                      <div *ngIf="kar.tipo == 'SALDO'; then devBlock else otrBlock"></div>
-                      <ng-template #devBlock>
+                      <div *ngIf="kar.tipo == 'SALDO'; then salBlock else otrBlock"></div>
+                      <ng-template #salBlock>
                         <td>{{kar.totalAcumulado | currency}}</td>
                       </ng-template>
                       <ng-template #otrBlock>
-                        <td>{{kar.totalFac | currency}}</td>
+                        <div *ngIf="kar.tipo == 'DEVOLUCION'; then devBlock else oBlock"></div>
+                        <ng-template #devBlock>
+                          <td>{{kar.costoUnitario | currency}}</td>
+                        </ng-template>
+                        <ng-template #oBlock>
+                          <td>{{kar.totalFac | currency}}</td>
+                        </ng-template>
                       </ng-template>
                     <td></td>
                   </ng-template>
