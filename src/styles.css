@@ -19,7 +19,7 @@
 .titleLbl {
     text-align: center;
 }
-#newBtn {
+#newBtn, #reportBtn {
     margin: 1em;
 }
 #deleteBtn, #editBtn {
@@ -115,4 +115,8 @@
   #empresaLogo {
     margin: 0 auto;
     width: 30%;
+  }
+
+  .money-row {
+    text-align: right;
   }

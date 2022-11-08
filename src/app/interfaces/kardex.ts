@@ -23,5 +23,6 @@ export interface Kardex {
     totalAcumulado: number,
     costoUnitario: number,
     fecha: any,
-    date: Date
+    date: Date,
+    corr: number
 }

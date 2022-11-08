@@ -1,7 +1,8 @@
 
 <h1 class="titleLbl">Listado de Items</h1>
 <button type="button" id="newBtn" class="btn btn-sm btn-success mb-1" data-toggle="modal" data-target="#productoModal" (click)="newModal()"><i class="fa-solid fa-plus"></i> Registrar nuevo</button>
-<table class="table">
+<button type="button" id="reportBtn" class="btn btn-sm btn-outline-primary mb-1" (click)="reportGenerate()"><i class="fa-regular fa-file-pdf"></i> Exportar PDF</button>
+<table class="table" id="reportToConvert">
     <thead class="thead-dark">
       <tr>
         <th scope="col">CODIGO</th>
@@ -9,10 +10,10 @@
         <th scope="col">DESCRIPCION</th>
         <th scope="col">MARCA</th>
         <th scope="col">KARDEX</th>
-        <th scope="col" class="details-table">COSTO UNITARIO (Bs.)</th>
-        <th scope="col" class="details-table">PRECIO VENTA (Bs.)</th>
-        <th scope="col" class="details-table">PRECIO FINAL (Bs.)</th>
-        <th scope="col" class="details-table">STOCK</th>
+        <th scope="col" class="details-table money-row">COSTO UNITARIO (Bs.)</th>
+        <th scope="col" class="details-table money-row">PRECIO VENTA (Bs.)</th>
+        <th scope="col" class="details-table money-row">PRECIO FINAL (Bs.)</th>
+        <th scope="col" class="details-table money-row">STOCK</th>
         <th scope="col" class="details-table">QR</th>
         <th scope="col">OPCIONES</th>
       </tr>
@@ -26,10 +27,10 @@
         <td>
           <button type="button" class="btn btn-sm btn-outline-success" (click)="getKardex(prod.codigo, prod.id)"><i class="fa-solid fa-paperclip"></i></button> 
         </td>
-        <td>{{prod.costoUnitario | currency}}</td>
-        <td>{{(prod.costoUnitario)*(1.4) | currency}}</td>
-        <td>{{(prod.costoUnitario * 1.4)/(0.87) | currency}}</td>
-        <td>{{prod.inventario}} u.</td>
+        <td class="money-row">{{(prod.costoUnitario).toFixed(2)}}</td>
+        <td class="money-row">{{((prod.costoUnitario)*(1.4)).toFixed(2)}}</td>
+        <td class="money-row">{{((prod.costoUnitario * 1.4)/(0.87)).toFixed(2)}}</td>
+        <td class="money-row">{{prod.inventario}} u.</td>
         <td>
           <button type="button" class="btn btn-sm btn-outline-primary" (click)="qrGenerate(prod.codigo, prod.descripcion, prod.marca)"><i class="fa-solid fa-qrcode"></i></button> 
         </td>
@@ -159,7 +160,7 @@
               <tbody class="details-table">
                 <tr  *ngFor = "let kar of kardex  ; last as isLast">
                   <td>{{kar.fecha}}</td>
-                  <td>{{kar.tipo}}</td>
+                  <td>{{kar.tipo}} {{kar.corr}}</td>
                   <div *ngIf="kar.tipo == 'COMPRA' || kar.tipo == 'SALDO' || kar.tipo == 'DEVOLUCION'; then thenBlock else elseBlock">{{kar.tipo}}</div>
                   <ng-template #thenBlock>
                     <td>{{kar.cantidad}}</td>
@@ -177,22 +178,22 @@
                     </ng-template>
                     <div *ngIf="kar.tipo == 'COMPRA'; then compraBlock else otroBlock"></div>
                       <ng-template #compraBlock>
-                        <td>{{(kar.totalFac / kar.cantidad) | currency}}</td>
+                        <td class="money-row">{{(kar.totalFac / kar.cantidad).toFixed(2)}}</td>
                       </ng-template>
                       <ng-template #otroBlock>
-                        <td>{{kar.costoUnitario | currency}}</td>
+                        <td class="money-row">{{(kar.costoUnitario).toFixed(2)}}</td>
                       </ng-template>
                       <div *ngIf="kar.tipo == 'SALDO'; then salBlock else otrBlock"></div>
                       <ng-template #salBlock>
-                        <td>{{kar.totalAcumulado | currency}}</td>
+                        <td class="money-row">{{(kar.totalAcumulado).toFixed(2)}}</td>
                       </ng-template>
                       <ng-template #otrBlock>
                         <div *ngIf="kar.tipo == 'DEVOLUCION'; then devBlock else oBlock"></div>
                         <ng-template #devBlock>
-                          <td>{{kar.costoUnitario | currency}}</td>
+                          <td class="money-row">{{(kar.costoUnitario).toFixed(2)}}</td>
                         </ng-template>
                         <ng-template #oBlock>
-                          <td>{{kar.totalFac | currency}}</td>
+                          <td class="money-row">{{(kar.totalFac).toFixed(2)}}</td>
                         </ng-template>
                       </ng-template>
                     <td></td>
@@ -211,11 +212,11 @@
                     <ng-template #noLast>
                       <td>{{kar.inventario}}</td>
                     </ng-template>
-                    <td>{{kar.costoUnitario | currency}}</td>
+                    <td class="money-row">{{(kar.costoUnitario).toFixed(2)}}</td>
                     <td></td>
-                    <td>{{kar.totalFac | currency}}</td>
+                    <td class="money-row">{{(kar.totalFac).toFixed(2)}}</td>
                   </ng-template>
-                  <td>{{kar.totalAcumulado | currency}}</td>
+                  <td class="money-row">{{(kar.totalAcumulado).toFixed(2)}}</td>
                 </tr>
               </tbody>
             </table>
