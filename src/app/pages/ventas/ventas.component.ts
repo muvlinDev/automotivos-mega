@@ -30,6 +30,7 @@ export class VentasComponent implements OnInit {
     this.productForm = this.fb.group({});
     this.ventaForm = this.fb.group({
       id: ['', Validators.required],
+      descripcionVenta: ['', Validators.required],
       cantidad: ['', Validators.required]
     });
     this.productos = this._db.getAllProductos();
@@ -65,6 +66,7 @@ export class VentasComponent implements OnInit {
         if (element.inventario > this.ventaForm.value.cantidad) {
           let np = {} as Soldprod;
           np.id = element.id;
+          np.descripcionVenta = (this.ventaForm.value.descripcionVenta).toUpperCase();
           np.codigo = element.codigo;
           np.clasificacion = element.clasificacion;
           np.descripcion = element.descripcion;

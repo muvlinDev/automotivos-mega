@@ -1,5 +1,6 @@
 export interface Soldprod {
     id: string,
+    descripcionVenta: string,
     codigo: string,
     clasificacion: string,
     descripcion: string,

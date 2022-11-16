@@ -1,5 +1,6 @@
 export interface Addedprod {
     id: string,
+    descripcionCompra: string,
     codigo: string,
     clasificacion: string,
     descripcion: string,

@@ -36,6 +36,7 @@ export class ProductosComponent implements OnInit {
   compras: Observable<any[]> = EMPTY;
   ventas: Observable<any[]> = EMPTY;
   articulo: string = '';
+  clasificacion: string = '';
   total = 0;
   costoTotal = 0.0;
 
@@ -169,26 +170,26 @@ export class ProductosComponent implements OnInit {
 
   getKardex(codigo: string, id: string) {
     this._db.getProducto(id).subscribe( e => {
-      console.log(e.inventario);
+      //console.log(e.inventario);
       if (e.inventario > 0) {
         this.kardex = [];
         this.kardexModal.show();
         this.cod = codigo;
         this.compras = this._db.getCompras(codigo);
         this.compras.subscribe(c => {
-          var j = 1;
+          //var j = 1;
           for(var i = 0; i < c.length; i++) {
             let kar = c[i];
             kar.fecha = this._utils.getDateFromTimestamp(kar.fecha);
-            //kar.tipo = kar.tipo;
+            kar.operacion = c[i].descripcionCompra;
             kar.date = this._utils.getDateFromString(kar.fecha);
-            if (kar.tipo === 'COMPRA') {
-              kar.corr = j;
-              j++;
-            }
-            else {
-              kar.corr = '';
-            }
+            // if (kar.tipo === 'COMPRA') {
+            //   kar.corr = j;
+            //   j++;
+            // }
+            // else {
+            //   kar.corr = '';
+            // }
             console.log(kar);
             
             this.kardex.push(kar);
@@ -198,11 +199,12 @@ export class ProductosComponent implements OnInit {
         this.ventas.subscribe(v => {
           for(var i = 0; i < v.length; i++) {
             this.articulo = v[i].descripcion;
+            this.clasificacion = v[i].clasificacion;
             let kar = v[i];
             kar.fecha = this._utils.getDateFromTimestamp(kar.fecha);
-            //kar.tipo = 'VENTA';
+            kar.operacion = v[i].descripcionVenta;
             kar.date = this._utils.getDateFromString(kar.fecha);
-            kar.corr = i + 1;
+            //kar.corr = i + 1;
             console.log(kar);
             this.kardex.push(kar);
           }

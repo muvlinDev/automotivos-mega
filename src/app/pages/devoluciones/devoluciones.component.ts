@@ -31,6 +31,7 @@ export class DevolucionesComponent implements OnInit {
     });
     this.compraForm = this.fb.group({
       id: ['', Validators.required],
+      descripcionCompra: ['', Validators.required],
       //precioCompra: ['', Validators.required],
       cantidad: ['', Validators.required]
     });
@@ -66,6 +67,7 @@ export class DevolucionesComponent implements OnInit {
         console.log(element);
         let np = {} as Addedprod;
         np.id = element.id;
+        np.descripcionCompra = (this.compraForm.value.descripcionCompra).toUpperCase();
         np.codigo = element.codigo;
         np.clasificacion = element.clasificacion;
         np.descripcion = element.descripcion;

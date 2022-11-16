@@ -24,5 +24,6 @@ export interface Kardex {
     costoUnitario: number,
     fecha: any,
     date: Date,
-    corr: number
+    corr: number,
+    operacion: string
 }

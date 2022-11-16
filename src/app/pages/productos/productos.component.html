@@ -10,9 +10,9 @@
         <th scope="col">DESCRIPCION</th>
         <th scope="col">MARCA</th>
         <th scope="col">KARDEX</th>
-        <th scope="col" class="details-table money-row">COSTO UNITARIO (Bs.)</th>
-        <th scope="col" class="details-table money-row">PRECIO VENTA (Bs.)</th>
-        <th scope="col" class="details-table money-row">PRECIO FINAL (Bs.)</th>
+        <th scope="col" class="details-table money-row">C.U. (Bs.)</th>
+        <th scope="col" class="details-table money-row">P.V. (Bs.)</th>
+        <th scope="col" class="details-table money-row">P.F. (Bs.)</th>
         <th scope="col" class="details-table money-row">STOCK</th>
         <th scope="col" class="details-table">QR</th>
         <th scope="col">OPCIONES</th>
@@ -126,22 +126,22 @@
           <div class="row">
             <h2 class="text-center">TARJETA KARDEX FISICO VALORADO</h2>
             <div class="row">
-              <div class="col-sm-3 blackLbl details-table">ARTICULO:</div>
-              <div class="col-sm-3 details-table">{{articulo}}</div>
-              <div class="col-sm-3 blackLbl details-table">UNIDAD DE MEDIDA:</div>
-              <div class="col-sm-3 details-table">PIEZAS</div>
+              <div class="col-sm-2 blackLbl details-table">ARTICULO:</div>
+              <div class="col-sm-6 details-table">{{clasificacion}} {{articulo}}</div>
+              <div class="col-sm-2 blackLbl details-table">UNIDAD DE MEDIDA:</div>
+              <div class="col-sm-2 details-table">PIEZAS</div>
             </div>
             <div class="row">
-              <div class="col-sm-3 blackLbl details-table">EXISTENCIA MINIMA:</div>
-              <div class="col-sm-3 details-table">1</div>
-              <div class="col-sm-3 blackLbl details-table">EXISTENCIA MAXIMA:</div>
-              <div class="col-sm-3 details-table">100</div>
+              <div class="col-sm-2 blackLbl details-table">EXISTENCIA MINIMA:</div>
+              <div class="col-sm-6 details-table">1</div>
+              <div class="col-sm-2 blackLbl details-table">EXISTENCIA MAXIMA:</div>
+              <div class="col-sm-2 details-table">100</div>
             </div>
             <div class="row">
-              <div class="col-sm-3 blackLbl details-table">CODIGO:</div>
-              <div class="col-sm-3 details-table">{{cod}}</div>
-              <div class="col-sm-3 blackLbl details-table">METODO:</div>
-              <div class="col-sm-3 details-table">CPP</div>
+              <div class="col-sm-2 blackLbl details-table">CODIGO:</div>
+              <div class="col-sm-6 details-table">{{cod}}</div>
+              <div class="col-sm-2 blackLbl details-table">METODO:</div>
+              <div class="col-sm-2 details-table">CPP</div>
             </div>
             <table class="table table-bordered">
               <thead>
@@ -160,7 +160,7 @@
               <tbody class="details-table">
                 <tr  *ngFor = "let kar of kardex  ; last as isLast">
                   <td>{{kar.fecha}}</td>
-                  <td>{{kar.tipo}} {{kar.corr}}</td>
+                  <td>{{kar.operacion}}</td>
                   <div *ngIf="kar.tipo == 'COMPRA' || kar.tipo == 'SALDO' || kar.tipo == 'DEVOLUCION'; then thenBlock else elseBlock">{{kar.tipo}}</div>
                   <ng-template #thenBlock>
                     <td>{{kar.cantidad}}</td>
