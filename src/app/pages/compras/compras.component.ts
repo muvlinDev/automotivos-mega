@@ -1,10 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
-import { Observable } from 'rxjs';
+import { Observable, EMPTY, first } from 'rxjs';
 import { DatabaseService } from '../../services/database.service';
 import { Addedprod } from '../../interfaces/addedprod';
 import { UtilsService } from '../../services/utils.service';
+import { Kardex } from 'src/app/interfaces/kardex';
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
 
 @Component({
   selector: 'app-compras',
@@ -15,10 +18,16 @@ export class ComprasComponent implements OnInit {
 
   productos: Observable<any[]>;
   compraForm: FormGroup;
+  reporteForm: FormGroup;
   nuevasCompras: Addedprod[] = [];
   saving = false;
   productoSeleccionado = '';
   productoForm: FormGroup;
+  cod = '';
+  articulo = '';
+  clasificacion = '';
+  compras: Observable<any[]>;
+  kardex: Kardex[] = [];
 
   constructor( private fb: FormBuilder,
                private _db: DatabaseService,
@@ -32,7 +41,11 @@ export class ComprasComponent implements OnInit {
       precioCompra: ['', Validators.required],
       cantidad: ['', Validators.required]
     });
+    this.reporteForm = this.fb.group({
+      id: ['', Validators.required]
+    });
     this.productos = this._db.getAllProductos();
+    this.compras = this._db.getCompras('0');
   }
 
   ngOnInit(): void {
@@ -51,7 +64,6 @@ export class ComprasComponent implements OnInit {
     var one = true;
     prod.forEach(element => {
       if (one) {
-        console.log(element);
         let np = {} as Addedprod;
         np.id = element.id;
         np.descripcionCompra = (this.compraForm.value.descripcionCompra).toUpperCase();
@@ -73,7 +85,6 @@ export class ComprasComponent implements OnInit {
         //np.costoUnitario = np.costoCompra;
         this.nuevasCompras.push(np);
         np.tipo = 'COMPRA';
-        console.log(np);
         
         this.compraForm.reset();
         one = false;
@@ -110,4 +121,103 @@ export class ComprasComponent implements OnInit {
       this.saving = false;
     });
   }
+
+  reporte() {
+    if (this.productoSeleccionado === '') {
+      this.toastr.error('Para generar un reporte, debe seleccionar un item', 'ATENCIÓN');
+      return;
+    }
+    this.kardex = [];
+    const prod = this._db.getProducto(this.productoSeleccionado);
+    prod.pipe(first()).subscribe(p => {
+      this.cod = p.codigo;
+      this.articulo = p.descripcion;
+      this.clasificacion = p.clasificacion;
+      this.compras = this._db.getCompras(this.cod);
+      this.compras
+        .pipe(first())
+        .subscribe(c => {
+        for(var i = 0; i < c.length; i++) {
+          let kar = c[i];
+          kar.fecha = this._utils.getDateFromTimestamp(kar.fecha);
+          kar.operacion = c[i].descripcionCompra;
+          kar.date = this._utils.getDateFromString(kar.fecha);
+          this.kardex.push(kar);
+        }
+      });
+      setTimeout(() => {
+        this.kardex.sort(function(a,b) {
+          return a.date.getTime() - b.date.getTime();
+        });
+      }, 800);
+    });
+  }
+
+  pdfGenerate() {
+    var data = document.getElementById('reporteComprasPDF') as HTMLElement;
+    html2canvas(data, { useCORS: true, allowTaint: true, scrollY: 0 }).then((canvas) => {
+      const image = { type: 'jpeg', quality: 0.98 };
+      const margin = [0.5, 0.5];
+      const filename = 'compras.pdf';
+
+      var imgWidth = 8.5;
+      var pageHeight = 11;
+
+      var innerPageWidth = imgWidth - margin[0] * 2;
+      var innerPageHeight = pageHeight - margin[1] * 2;
+
+      // Calculate the number of pages.
+      var pxFullHeight = canvas.height;
+      var pxPageHeight = Math.floor(canvas.width * (pageHeight / imgWidth));
+      var nPages = Math.ceil(pxFullHeight / pxPageHeight);
+
+      // Define pageHeight separately so it can be trimmed on the final page.
+      var pageHeight = innerPageHeight;
+
+      // Create a one-page canvas to split up the full image.
+      var pageCanvas = document.createElement('canvas');
+      var pageCtx = pageCanvas.getContext('2d');
+      pageCanvas.width = canvas.width;
+      pageCanvas.height = pxPageHeight;
+
+      // Initialize the PDF.
+      var pdf = new jsPDF('p', 'in', [8.5, 11]);
+
+      for (var page = 0; page < nPages; page++) {
+        // Trim the final page to reduce file size.
+        if (page === nPages - 1 && pxFullHeight % pxPageHeight !== 0) {
+          pageCanvas.height = pxFullHeight % pxPageHeight;
+          pageHeight = (pageCanvas.height * innerPageWidth) / pageCanvas.width;
+        }
+
+        // Display the page.
+        var w = pageCanvas.width;
+        var h = pageCanvas.height;
+        pageCtx!.fillStyle = 'white';
+        pageCtx!.fillRect(0, 0, w, h);
+        pageCtx!.drawImage(canvas, 0, page * pxPageHeight, w, h, 0, 0, w, h);
+
+        // Add the page to the PDF.
+        if (page > 0) pdf.addPage();
+        var imgData = pageCanvas.toDataURL('image/' + image.type, image.quality);
+        pdf.addImage(imgData, image.type, margin[1], margin[0], innerPageWidth, pageHeight);
+
+        var str = "Página " + (page+1)  + " de " +  nPages;
+        pdf.setFontSize(5);// optional
+        pdf.text("Documento generado por el Sistema Automotivos MEGA en fecha " + this.getDate(), 0.5, pdf.internal.pageSize.height - 0.2);
+        pdf.text(str, 7.5, pdf.internal.pageSize.height - 0.2);
+      }
+
+      pdf.save('reporte-compras.pdf');
+    });
+  }
+
+  getDate(): string {
+    var today = new Date();
+    var dd = String(today.getDate()).padStart(2, '0');
+    var mm = String(today.getMonth() + 1).padStart(2, '0');
+    var yyyy = today.getFullYear();
+    return dd + '/' + mm + '/' + yyyy;
+  }
+
 }

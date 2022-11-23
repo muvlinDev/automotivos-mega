@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DatabaseService } from '../../services/database.service';
-import { EMPTY, Observable } from 'rxjs';
+import { EMPTY, Observable, first } from 'rxjs';
 import { Kardex } from '../../interfaces/kardex';
 import { UtilsService } from '../../services/utils.service';
 import { ToastrService } from 'ngx-toastr';
@@ -51,7 +51,7 @@ export class ProductosComponent implements OnInit {
       marca: ['', Validators.required]
     });
     this.productos = this.getProducts(this.startKey);
-    this.myAngularxQrCode = 'tutsmake.com';
+    this.myAngularxQrCode = 'muvlin.com';
   }
 
   ngOnInit(): void {
@@ -63,7 +63,7 @@ export class ProductosComponent implements OnInit {
   getProducts( start: any ) {
     var aux = 0;
     var prods = this._db.getProductos(10, start);
-    prods.subscribe(p => {    
+    prods.pipe(first()).subscribe(p => {    
       p.forEach(prod => {
         if (aux == 9) {
           this.startKey = prod.codigo
@@ -170,13 +170,12 @@ export class ProductosComponent implements OnInit {
 
   getKardex(codigo: string, id: string) {
     this._db.getProducto(id).subscribe( e => {
-      //console.log(e.inventario);
       if (e.inventario > 0) {
         this.kardex = [];
         this.kardexModal.show();
         this.cod = codigo;
         this.compras = this._db.getCompras(codigo);
-        this.compras.subscribe(c => {
+        this.compras.pipe(first()).subscribe(c => {
           //var j = 1;
           for(var i = 0; i < c.length; i++) {
             let kar = c[i];
@@ -190,13 +189,12 @@ export class ProductosComponent implements OnInit {
             // else {
             //   kar.corr = '';
             // }
-            console.log(kar);
             
             this.kardex.push(kar);
           }
         });
         this.ventas = this._db.getVentas(codigo);
-        this.ventas.subscribe(v => {
+        this.ventas.pipe(first()).subscribe(v => {
           for(var i = 0; i < v.length; i++) {
             this.articulo = v[i].descripcion;
             this.clasificacion = v[i].clasificacion;
@@ -205,7 +203,6 @@ export class ProductosComponent implements OnInit {
             kar.operacion = v[i].descripcionVenta;
             kar.date = this._utils.getDateFromString(kar.fecha);
             //kar.corr = i + 1;
-            console.log(kar);
             this.kardex.push(kar);
           }
         });

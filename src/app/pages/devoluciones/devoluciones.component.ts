@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, first } from 'rxjs';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Addedprod } from '../../interfaces/addedprod';
 import { DatabaseService } from '../../services/database.service';
@@ -60,11 +60,10 @@ export class DevolucionesComponent implements OnInit {
       this.toastr.error('Debe completar todos los campos', 'Ocurrió un error');
       return
     }
-    const prod = this._db.getProducto(this.compraForm.value.id);
+    // const prod = this._db.getProducto(this.compraForm.value.id);
     var one = true;
-    prod.forEach(element => {
+    this._db.getProducto(this.compraForm.value.id).pipe(first()).forEach(element => {
       if (one) {
-        console.log(element);
         let np = {} as Addedprod;
         np.id = element.id;
         np.descripcionCompra = (this.compraForm.value.descripcionCompra).toUpperCase();
@@ -87,7 +86,6 @@ export class DevolucionesComponent implements OnInit {
         np.costoUnitario = this.costoUnitario;
         this.nuevasCompras.push(np);
         np.tipo = 'DEVOLUCION';
-        console.log(np);
         this.precioCompra = 0;
         this.compraForm.reset();
         one = false;
