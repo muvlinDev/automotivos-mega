@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators, FormsModule } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { Observable, EMPTY, first } from 'rxjs';
 import { DatabaseService } from '../../services/database.service';
@@ -8,17 +8,20 @@ import { UtilsService } from '../../services/utils.service';
 import { Kardex } from 'src/app/interfaces/kardex';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
+import { NgbCalendar, NgbDatepickerModule, NgbDateStruct, NgbDatepickerI18n } from '@ng-bootstrap/ng-bootstrap';
+import { I18n, Datepickeri18nService } from '../../services/datepickeri18n.service';
 
 @Component({
   selector: 'app-compras',
   templateUrl: './compras.component.html',
-  styleUrls: ['./compras.component.css']
+  styleUrls: ['./compras.component.css'],
+  providers: [I18n,{provide: NgbDatepickerI18n, useClass: Datepickeri18nService}]
 })
 export class ComprasComponent implements OnInit {
-
   productos: Observable<any[]>;
   compraForm: FormGroup;
   reporteForm: FormGroup;
+  fechasForm: FormGroup;
   nuevasCompras: Addedprod[] = [];
   saving = false;
   productoSeleccionado = '';
@@ -28,11 +31,16 @@ export class ComprasComponent implements OnInit {
   clasificacion = '';
   compras: Observable<any[]>;
   kardex: Kardex[] = [];
+  model: NgbDateStruct;
+  comprasPorFecha: Observable<any[]> = EMPTY;
+  kardexFecha: Kardex[] = [];
+  fechaSeleccionada = '';
 
   constructor( private fb: FormBuilder,
                private _db: DatabaseService,
                private _utils: UtilsService,
-               private toastr: ToastrService ) { 
+               private toastr: ToastrService,
+               private calendar: NgbCalendar ) { 
     this.productoForm = this.fb.group({
     });
     this.compraForm = this.fb.group({
@@ -44,11 +52,15 @@ export class ComprasComponent implements OnInit {
     this.reporteForm = this.fb.group({
       id: ['', Validators.required]
     });
+    this.fechasForm = this.fb.group({
+      fecha: ['', Validators.required]
+    });
     this.productos = this._db.getAllProductos();
     this.compras = this._db.getCompras('0');
+    this.model = this.calendar.getToday();
   }
 
-  ngOnInit(): void {
+  ngOnInit(): void { 
   }
 
   seleccionarProducto(event: any) {
@@ -153,8 +165,8 @@ export class ComprasComponent implements OnInit {
     });
   }
 
-  pdfGenerate() {
-    var data = document.getElementById('reporteComprasPDF') as HTMLElement;
+  pdfGenerate(template: string) {
+    var data = document.getElementById(template) as HTMLElement;
     html2canvas(data, { useCORS: true, allowTaint: true, scrollY: 0 }).then((canvas) => {
       const image = { type: 'jpeg', quality: 0.98 };
       const margin = [0.5, 0.5];
@@ -220,4 +232,27 @@ export class ComprasComponent implements OnInit {
     return dd + '/' + mm + '/' + yyyy;
   }
 
+  reporteFecha() {
+    if(this.fechasForm.invalid) {
+      this.toastr.error("Debe seleccionar una fecha", "ERROR");
+    }
+    else {
+      this.fechaSeleccionada = this.fechasForm.value.fecha.day + "/" + this.fechasForm.value.fecha.month + "/" + this.fechasForm.value.fecha.year;
+      let startDate = new Date(this.fechasForm.value.fecha.year + "-" + this.fechasForm.value.fecha.month + "-" + this.fechasForm.value.fecha.day + " 00:00:00");
+      let endDate = new Date(this.fechasForm.value.fecha.year + "-" + this.fechasForm.value.fecha.month + "-" + this.fechasForm.value.fecha.day + " 23:59:59");
+      this.kardexFecha = [];
+      this.comprasPorFecha = this._db.getComprasByDate(startDate, endDate);
+      this.comprasPorFecha
+        .pipe(first())
+        .subscribe(c => {
+        for(var i = 0; i < c.length; i++) {
+          let kar = c[i];
+          kar.fecha = this._utils.getDateFromTimestamp(kar.fecha);
+          kar.operacion = c[i].descripcionCompra;
+          kar.date = this._utils.getDateFromString(kar.fecha);
+          this.kardexFecha.push(kar);
+        }
+      });
+    }
+  }
 }

@@ -8,6 +8,7 @@ import { ToastrService } from 'ngx-toastr';
 import { Kardex } from 'src/app/interfaces/kardex';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
+import { NgbCalendar } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-ventas',
@@ -15,10 +16,10 @@ import jsPDF from 'jspdf';
   styleUrls: ['./ventas.component.css']
 })
 export class VentasComponent implements OnInit {
-
   productos: Observable<any[]>;
   ventaForm: FormGroup;
   reporteForm: FormGroup;
+  fechasForm: FormGroup;
   nuevasVentas: Soldprod[] = [];
   saving = false;
   productoSeleccionado = '';
@@ -32,11 +33,15 @@ export class VentasComponent implements OnInit {
   clasificacion = '';
   ventas: Observable<any[]> = EMPTY;
   kardex: Kardex[] = [];
+  ventasPorFecha: Observable<any[]> = EMPTY;
+  kardexFecha: Kardex[] = [];
+  fechaSeleccionada = '';
 
   constructor( private fb: FormBuilder,
                private _db: DatabaseService,
                private _utils: UtilsService,
-               private toastr: ToastrService ) { 
+               private toastr: ToastrService,
+               private calendar: NgbCalendar ) { 
     this.productForm = this.fb.group({});
     this.ventaForm = this.fb.group({
       id: ['', Validators.required],
@@ -45,6 +50,9 @@ export class VentasComponent implements OnInit {
     });
     this.reporteForm = this.fb.group({
       id: ['', Validators.required]
+    });
+    this.fechasForm = this.fb.group({
+      fecha: ['', Validators.required]
     });
     this.productos = this._db.getAllProductos();
   }
@@ -173,8 +181,8 @@ export class VentasComponent implements OnInit {
     });
   }
 
-  pdfGenerate() {
-    var data = document.getElementById('reporteVentasPDF') as HTMLElement;
+  pdfGenerate(template: string) {
+    var data = document.getElementById(template) as HTMLElement;
     html2canvas(data, { useCORS: true, allowTaint: true, scrollY: 0 }).then((canvas) => {
       const image = { type: 'jpeg', quality: 0.98 };
       const margin = [0.5, 0.5];
@@ -238,5 +246,29 @@ export class VentasComponent implements OnInit {
     var mm = String(today.getMonth() + 1).padStart(2, '0');
     var yyyy = today.getFullYear();
     return dd + '/' + mm + '/' + yyyy;
+  }
+
+  reporteFecha() {
+    if(this.fechasForm.invalid) {
+      this.toastr.error("Debe seleccionar una fecha", "ERROR");
+    }
+    else {
+      this.fechaSeleccionada = this.fechasForm.value.fecha.day + "/" + this.fechasForm.value.fecha.month + "/" + this.fechasForm.value.fecha.year;
+      let startDate = new Date(this.fechasForm.value.fecha.year + "-" + this.fechasForm.value.fecha.month + "-" + this.fechasForm.value.fecha.day + " 00:00:00");
+      let endDate = new Date(this.fechasForm.value.fecha.year + "-" + this.fechasForm.value.fecha.month + "-" + this.fechasForm.value.fecha.day + " 23:59:59");
+      this.kardexFecha = [];
+      this.ventasPorFecha = this._db.getVentasByDate(startDate, endDate);
+      this.ventasPorFecha
+        .pipe(first())
+        .subscribe(c => {
+        for(var i = 0; i < c.length; i++) {
+          let kar = c[i];
+          kar.fecha = this._utils.getDateFromTimestamp(kar.fecha);
+          kar.operacion = c[i].descripcionVenta;
+          kar.date = this._utils.getDateFromString(kar.fecha);
+          this.kardexFecha.push(kar);
+        }
+      });
+    }
   }
 }

@@ -1,7 +1,7 @@
 export interface Kardex {
     codigo: string,
     clasificacion: string,
-    descrcipcion: string,
+    descripcion: string,
     marca: string,
     tipo: string,
     /*costo: number,

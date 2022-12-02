@@ -12,7 +12,9 @@
               <button class="nav-link active" id="nav-nuevo-tab" data-bs-toggle="tab" data-bs-target="#nav-nuevo"
                 type="button" role="tab" aria-controls="nav-nuevo" aria-selected="true">REGISTRAR NUEVA COMPRA</button>
               <button class="nav-link" id="nav-reporte-tab" data-bs-toggle="tab" data-bs-target="#nav-reporte"
-                type="button" role="tab" aria-controls="nav-reporte" aria-selected="false">REPORTE DE COMPRAS</button>
+                type="button" role="tab" aria-controls="nav-reporte" aria-selected="false">REPORTE POR ITEM</button>
+              <button class="nav-link" id="nav-fechas-tab" data-bs-toggle="tab" data-bs-target="#nav-fechas"
+                type="button" role="tab" aria-controls="nav-fechas" aria-selected="false">REPORTE POR FECHA</button>
             </div>
           </nav>
 
@@ -102,10 +104,12 @@
                 </div>
               </form>
             </div>
+
             <div class="tab-pane fade" id="nav-reporte" role="tabpanel" aria-labelledby="nav-reporte-tab" tabindex="0">
+              <br><br>
               <form [formGroup]="reporteForm" autocomplete="off">
                 <div class="row">
-                  <div class="form-group col-sm-10">
+                  <div class="form-group col-sm-9">
                     <label for="producto">Seleccione Item</label>
                     <select id="producto" class="form-control" formControlName="id" (change)="seleccionarProducto($event)">
                       <option value="">...</option>
@@ -113,17 +117,19 @@
                         {{p.marca}} ({{p.descripcion}})</option>
                     </select>
                   </div>
-                  <div class="col-sm-2 mt-3">
+                  <div class="col-sm-3 mt-4">
                     <button type="button" class="btn btn-outline-primary" id="reporte" (click)="reporte()">Generar reporte</button>
                   </div>
                 </div>
-                <br>
+                <br><br><br><hr>
                 <div>
                   <div id="reporteComprasPDF">
-                    <div class="row details-table">Empresa Unipersonal Automotivos "MEGA"</div>
-                    <div class="row details-table">De: Carla Guadalupe Huanca Apaza</div>
-                    <div class="row details-table">NIT: 8315762015</div>
-                    <div class="row details-table">El Alto - Bolivia</div>
+                    <div class="container">
+                      <div class="row details-table">Empresa Unipersonal Automotivos "MEGA"</div>
+                      <div class="row details-table">De: Carla Guadalupe Huanca Apaza</div>
+                      <div class="row details-table">NIT: 8315762015</div>
+                      <div class="row details-table">El Alto - Bolivia</div>
+                    </div>
                     <div class="row">
                       <h2 class="text-center">REPORTE DE COMPRAS</h2>
                       <div class="row">
@@ -164,10 +170,88 @@
                       </tbody>
                     </table>
                   </div>
-                  <button class="btn btn-outline-success" (click)="pdfGenerate()">Exportar PDF</button>
+                  <button class="btn btn-outline-success" (click)="pdfGenerate('reporteComprasPDF')">Exportar PDF</button>
                 </div>
               </form>
             </div>
+
+            <div class="tab-pane fade" id="nav-fechas" role="tabpanel" aria-labelledby="nav-fechas-tab" tabindex="0">
+              <br><br>
+              <form [formGroup]="fechasForm" autocomplete="off">
+                <div class="row">
+                  <div class="form-group col-sm-4">
+                    <label for="producto">Seleccione Fecha:</label>
+                    <div class="input-group">
+                      <input
+                        class="form-control"
+                        placeholder="yyyy-mm-dd"
+                        name="dp"
+                        formControlName="fecha"
+                        ngbDatepicker
+                        #d="ngbDatepicker"
+                        readonly
+                        (click)="d.toggle()"
+                      />
+                      <button class="btn btn-outline-secondary" (click)="d.toggle()" type="button"><i class="fa-regular fa-calendar-days"></i></button>
+                    </div>
+                  </div>
+                  <div class="col-sm-4 mt-4">
+                    <button type="button" class="btn btn-outline-primary" id="reporte" (click)="reporteFecha()">Generar reporte</button>
+                  </div>
+                </div>
+                <br><br><br><hr>
+                <div>
+                  <div id="reporteCompraFechaPDF">
+                    <div class="container">
+                      <div class="row details-table">Empresa Unipersonal Automotivos "MEGA"</div>
+                      <div class="row details-table">De: Carla Guadalupe Huanca Apaza</div>
+                      <div class="row details-table">NIT: 8315762015</div>
+                      <div class="row details-table">El Alto - Bolivia</div>
+                    </div>
+                    <div class="row">
+                      <h2 class="text-center">REPORTE DE COMPRAS</h2><br>
+                      <p class="text-center">FECHA: {{fechaSeleccionada}}</p>
+                    </div>
+                    <div class="table-responsive">
+                      <table class="table table-bordered">
+                        <thead>
+                          <tr>
+                            <th>#</th>
+                            <th>DESCRIPCIÓN</th>
+                            <th>CODIGO</th>
+                            <th>CLASIFICACIÓN</th>
+                            <th>MARCA</th>
+                            <th>DETALLE</th>
+                            <th>FECHA</th>
+                            <th>COSTO COMPRA</th>
+                            <!-- <th>COSTO UNITARIO</th> -->
+                            <th>CANTIDAD</th>
+                            <th>TOTAL</th>
+                          </tr>
+                        </thead>
+                        <tbody class="details-table">
+                          <tr *ngFor="let com of kardexFecha; let i =index">
+                            <td>{{i+1}}</td>
+                            <td>{{com.operacion}}</td>
+                            <td>{{com.codigo}}</td>
+                            <td>{{com.clasificacion}}</td>
+                            <td>{{com.marca}}</td>
+                            <td>{{com.descripcion}}</td>
+                            <td>{{com.fecha}}</td>
+                            <td class="money-row">{{com.costoCompra.toFixed(2)}}</td>
+                            <!-- <td class="money-row">{{com.costoUnitario.toFixed(2)}}</td> -->
+                            <td class="money-row">{{com.tipo === 'SALDO' ? com.inventario : com.cantidad}}</td>
+                            <td class="money-row">{{com.tipo === 'SALDO' ? com.totalAcumulado.toFixed(2) : (com.costoCompra * com.cantidad).toFixed(2)}}</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                  <button class="btn btn-outline-success" (click)="pdfGenerate('reporteCompraFechaPDF')">Exportar PDF</button>
+                </div>
+              </form>
+            </div>
+
           </div>
         </div>
       </div>

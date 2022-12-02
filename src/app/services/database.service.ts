@@ -59,4 +59,12 @@ export class DatabaseService {
     return this.firestore.collection('ventas', ref => ref.where('codigo', '==', cod)
                                                           .orderBy('fecha')).valueChanges();
   }
+
+  getComprasByDate(startDate: Date, endDate: Date) {
+    return this.firestore.collection('compras', ref => ref.where('fecha', '>', startDate).where('fecha', '<', endDate)).valueChanges();
+  }
+
+  getVentasByDate(startDate: Date, endDate: Date) {
+    return this.firestore.collection('ventas', ref => ref.where('fecha', '>', startDate).where('fecha', '<', endDate)).valueChanges();
+  }
 }
