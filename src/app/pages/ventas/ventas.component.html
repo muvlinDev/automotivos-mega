@@ -224,7 +224,8 @@
                             <th>MARCA</th>
                             <th>DETALLE</th>
                             <th>FECHA</th>
-                            <th>COSTO COMPRA</th>
+                            <th>PRECIO FACTURADO</th>
+                            <th>PRECIO VENTA</th>
                             <!-- <th>COSTO UNITARIO</th> -->
                             <th>CANTIDAD</th>
                             <th>TOTAL</th>
@@ -239,10 +240,11 @@
                             <td>{{com.marca}}</td>
                             <td>{{com.descripcion}}</td>
                             <td>{{com.fecha}}</td>
-                            <td class="money-row">{{com.costoCompra.toFixed(2)}}</td>
+                            <td class="money-row">{{com.precioFinal.toFixed(2)}}</td>
+                            <td class="money-row">{{com.precioVenta.toFixed(2)}}</td>
                             <!-- <td class="money-row">{{com.costoUnitario.toFixed(2)}}</td> -->
-                            <td class="money-row">{{com.tipo === 'SALDO' ? com.inventario : com.cantidad}}</td>
-                            <td class="money-row">{{com.tipo === 'SALDO' ? com.totalAcumulado.toFixed(2) : (com.costoCompra * com.cantidad).toFixed(2)}}</td>
+                            <td class="money-row">{{com.cantidad}}</td>
+                            <td class="money-row">{{(com.precioVenta * com.cantidad).toFixed(2)}}</td>
                           </tr>
                         </tbody>
                       </table>
